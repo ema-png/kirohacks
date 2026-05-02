@@ -1,82 +1,6 @@
 import React, { useState, useMemo } from 'react'
-import { RESTAURANT_DB, scoreRestaurant, getPersonMenuMatches } from '../../data/restaurants'
+import { getPersonMenuMatches } from '../../data/restaurants'
 import { PERSON_COLORS, AVATARS } from './StepPeople'
-
-// ─── Mock Map ────────────────────────────────────────────────────────────────
-function MockMap({ restaurants, selectedId, onSelect }) {
-  return (
-    <div className="relative w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden rounded-2xl">
-      {/* Grid lines to suggest a map */}
-      <svg className="absolute inset-0 w-full h-full opacity-30" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#94a3b8" strokeWidth="0.5"/>
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grid)" />
-      </svg>
-
-      {/* Fake road lines */}
-      <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-        <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#e2e8f0" strokeWidth="8"/>
-        <line x1="0" y1="30%" x2="100%" y2="35%" stroke="#e2e8f0" strokeWidth="5"/>
-        <line x1="0" y1="70%" x2="100%" y2="68%" stroke="#e2e8f0" strokeWidth="5"/>
-        <line x1="30%" y1="0" x2="32%" y2="100%" stroke="#e2e8f0" strokeWidth="8"/>
-        <line x1="60%" y1="0" x2="62%" y2="100%" stroke="#e2e8f0" strokeWidth="5"/>
-        <line x1="80%" y1="0" x2="78%" y2="100%" stroke="#e2e8f0" strokeWidth="4"/>
-        {/* Road labels */}
-        <text x="5" y="48%" fill="#94a3b8" fontSize="9" fontFamily="sans-serif">Mission St</text>
-        <text x="5" y="29%" fill="#94a3b8" fontSize="9" fontFamily="sans-serif">Market St</text>
-        <text x="5" y="69%" fill="#94a3b8" fontSize="9" fontFamily="sans-serif">Valencia St</text>
-      </svg>
-
-      {/* "You are here" pin */}
-      <div className="absolute" style={{ left: '50%', top: '55%', transform: 'translate(-50%,-50%)' }}>
-        <div className="w-5 h-5 rounded-full bg-blue-500 border-3 border-white shadow-lg flex items-center justify-center">
-          <div className="w-2 h-2 rounded-full bg-white" />
-        </div>
-        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-blue-600 font-bold whitespace-nowrap">You</div>
-      </div>
-
-      {/* Restaurant pins */}
-      {restaurants.map((r, idx) => {
-        const isSelected = r.id === selectedId
-        const isBest = idx === 0
-        return (
-          <button
-            key={r.id}
-            onClick={() => onSelect(r.id)}
-            className="absolute group"
-            style={{ left: `${r.mapX}%`, top: `${r.mapY}%`, transform: 'translate(-50%, -100%)' }}
-          >
-            {/* Pin */}
-            <div className={`relative flex flex-col items-center transition-all duration-200 ${isSelected ? 'scale-125 z-20' : 'hover:scale-110 z-10'}`}>
-              <div className={`px-2.5 py-1.5 rounded-xl shadow-lg text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all ${
-                isSelected
-                  ? 'bg-brand-500 text-white shadow-brand-500/40'
-                  : isBest
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-white text-gray-800 border border-gray-200'
-              }`}>
-                <span>{r.emoji}</span>
-                <span className="hidden sm:inline">{r.name.split(' ')[0]}</span>
-                {isBest && <span className="bg-amber-400 text-gray-900 text-xs px-1 rounded font-black">★</span>}
-              </div>
-              {/* Stem */}
-              <div className={`w-0.5 h-3 ${isSelected ? 'bg-brand-500' : isBest ? 'bg-gray-900' : 'bg-gray-400'}`} />
-              <div className={`w-2 h-2 rounded-full ${isSelected ? 'bg-brand-500' : isBest ? 'bg-gray-900' : 'bg-gray-400'}`} />
-            </div>
-          </button>
-        )
-      })}
-
-      {/* Map attribution style label */}
-      <div className="absolute bottom-2 right-3 text-xs text-slate-400 font-medium">
-        PlateShare Maps · Mock Data
-      </div>
-    </div>
-  )
-}
 
 // ─── Per-person meal matches inside a restaurant card ────────────────────────
 function PersonMatches({ person, restaurant, index }) {
@@ -120,25 +44,17 @@ function PersonMatches({ person, restaurant, index }) {
 }
 
 // ─── Single restaurant card ───────────────────────────────────────────────────
-function RestaurantCard({ restaurant, people, rank, isSelected, onSelect }) {
+function RestaurantCard({ restaurant, people, rank }) {
   const [expanded, setExpanded] = useState(false)
-  const { score, satisfiedCount, totalPeople } = useMemo(
-    () => scoreRestaurant(restaurant, people),
-    [restaurant, people]
-  )
-
+  const satisfiedCount = restaurant.satisfiedCount ?? people.length
+  const totalPeople = restaurant.totalPeople ?? people.length
   const satisfactionPct = Math.round((satisfiedCount / Math.max(totalPeople, 1)) * 100)
   const isBest = rank === 0
 
   return (
-    <div
-      className={`rounded-2xl border-2 overflow-hidden transition-all duration-200 cursor-pointer ${
-        isSelected
-          ? 'border-brand-400 shadow-xl shadow-brand-500/15'
-          : 'border-gray-100 hover:border-gray-200 hover:shadow-md'
-      } bg-white`}
-      onClick={() => onSelect(restaurant.id)}
-    >
+    <div className={`rounded-2xl border-2 overflow-hidden bg-white transition-all duration-200 ${
+      isBest ? 'border-brand-300 shadow-lg' : 'border-gray-100 hover:border-gray-200 hover:shadow-md'
+    }`}>
       {/* Best match banner */}
       {isBest && (
         <div className="bg-gradient-to-r from-brand-500 to-amber-500 px-4 py-1.5 flex items-center gap-2">
@@ -257,29 +173,16 @@ function RestaurantCard({ restaurant, people, rank, isSelected, onSelect }) {
 }
 
 // ─── Main Results Step ────────────────────────────────────────────────────────
-export default function StepResults({ location, people, vibe = [], onReset }) {
-  const [sortBy, setSortBy] = useState('match') // 'match' | 'distance' | 'rating'
-  const [selectedId, setSelectedId] = useState(null)
+export default function StepResults({ location, people, restaurants = [], fetchError, onReset }) {
+  const [sortBy, setSortBy] = useState('match')
 
-  const scored = useMemo(() => {
-    return RESTAURANT_DB
-      .map(r => ({ ...r, ...scoreRestaurant(r, people, vibe) }))
-      .sort((a, b) => {
-        if (sortBy === 'distance') return a.distance - b.distance
-        if (sortBy === 'rating') return b.rating - a.rating
-        return b.score - a.score // default: best match
-      })
-  }, [people, vibe, sortBy])
-
-  // Auto-select best on first render
-  React.useEffect(() => {
-    if (scored.length > 0) setSelectedId(scored[0].id)
-  }, [])
-
-  const sortedForMap = useMemo(() => {
-    // Map always shows best-match order for pin numbering
-    return [...scored].sort((a, b) => b.score - a.score)
-  }, [scored])
+  const sorted = useMemo(() => {
+    return [...restaurants].sort((a, b) => {
+      if (sortBy === 'distance') return a.distance - b.distance
+      if (sortBy === 'rating') return b.rating - a.rating
+      return b.score - a.score
+    })
+  }, [restaurants, sortBy])
 
   return (
     <div className="flex flex-col h-full">
@@ -289,10 +192,10 @@ export default function StepResults({ location, people, vibe = [], onReset }) {
           <div>
             <p className="text-xs font-bold text-brand-500 uppercase tracking-widest mb-0.5">Results</p>
             <h2 className="text-2xl font-black text-gray-900 tracking-tight">
-              {scored.length} spots near <span className="text-brand-500">{location}</span>
+              {sorted.length} spots near <span className="text-brand-500">{location}</span>
             </h2>
             <p className="text-xs text-gray-400 mt-0.5">
-              Ranked for {people.length} {people.length === 1 ? 'person' : 'people'} · AI-matched
+              Ranked for {people.length} {people.length === 1 ? 'person' : 'people'} · Yelp data
             </p>
           </div>
           <button
@@ -307,53 +210,55 @@ export default function StepResults({ location, people, vibe = [], onReset }) {
         </div>
 
         {/* Sort controls */}
-        <div className="flex gap-2 mt-3">
-          {[
-            { key: 'match', label: '⭐ Best match' },
-            { key: 'distance', label: '📍 Nearest' },
-            { key: 'rating', label: '★ Top rated' },
-          ].map(s => (
-            <button
-              key={s.key}
-              onClick={() => setSortBy(s.key)}
-              className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all duration-150 ${
-                sortBy === s.key
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
+        {!fetchError && sorted.length > 0 && (
+          <div className="flex gap-2 mt-3">
+            {[
+              { key: 'match', label: '⭐ Best match' },
+              { key: 'distance', label: '📍 Nearest' },
+              { key: 'rating', label: '★ Top rated' },
+            ].map(s => (
+              <button
+                key={s.key}
+                onClick={() => setSortBy(s.key)}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all duration-150 ${
+                  sortBy === s.key
+                    ? 'bg-gray-900 text-white border-gray-900'
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Map + list layout */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-0 overflow-hidden min-h-0">
-
-        {/* Map panel */}
-        <div className="h-48 lg:h-auto lg:w-[45%] shrink-0 px-6 pb-3 lg:pb-6 lg:pt-0">
-          <MockMap
-            restaurants={sortedForMap}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-          />
+      {/* Error state */}
+      {fetchError && (
+        <div className="flex-1 flex items-center justify-center px-6">
+          <div className="text-center space-y-3 max-w-sm">
+            <p className="text-2xl">😕</p>
+            <p className="font-bold text-gray-900">Couldn't load restaurants</p>
+            <p className="text-sm text-gray-400">{fetchError}</p>
+            <p className="text-xs text-gray-300">Make sure the backend server is running on port 3001</p>
+            <button onClick={onReset} className="text-sm text-brand-500 font-semibold hover:underline">Try again</button>
+          </div>
         </div>
+      )}
 
-        {/* Restaurant list */}
+      {/* Restaurant list — full width */}
+      {!fetchError && (
         <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-3 min-h-0">
-          {scored.map((r, i) => (
+          {sorted.map((r, i) => (
             <RestaurantCard
               key={r.id}
               restaurant={r}
               people={people}
               rank={i}
-              isSelected={r.id === selectedId}
-              onSelect={setSelectedId}
             />
           ))}
         </div>
-      </div>
+      )}
     </div>
   )
 }
