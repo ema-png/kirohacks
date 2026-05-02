@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { VIBE_OPTIONS, OCCASION_OPTIONS } from './StepVibe'
+import { VIBE_OPTIONS} from './StepVibe'
 import { PERSON_COLORS, AVATARS } from './StepPeople'
 
 const LOADING_STEPS = [
@@ -13,9 +13,8 @@ const LOADING_STEPS = [
 ]
 
 // Build a natural-language summary of the group's preferences
-function buildSummary(people, vibe, occasion, location) {
+function buildSummary(people, vibe,  location) {
   const vibeLabels = vibe.map(id => VIBE_OPTIONS.find(v => v.id === id)?.label).filter(Boolean)
-  const occasionLabel = OCCASION_OPTIONS.find(o => o.id === occasion)?.label
 
   const allDiets = [...new Set(people.flatMap(p => [...p.diet, ...(p.otherDiet ? [p.otherDiet] : [])]))]
   const allFlavors = [...new Set(people.flatMap(p => [...p.flavors, ...(p.otherFlavors ? [p.otherFlavors] : [])]))]
@@ -26,7 +25,6 @@ function buildSummary(people, vibe, occasion, location) {
   const parts = []
 
   if (vibeLabels.length) parts.push(`${vibeLabels.join(' or ')} dining`)
-  if (occasionLabel) parts.push(`for ${occasionLabel.toLowerCase()}`)
   parts.push(`near ${location || 'your area'}`)
   parts.push(`for ${people.length} ${people.length === 1 ? 'person' : 'people'}`)
   if (allDiets.length) parts.push(`with ${allDiets.slice(0, 3).join(', ')} needs`)
@@ -37,9 +35,9 @@ function buildSummary(people, vibe, occasion, location) {
   return parts.join(' · ')
 }
 
-export default function LoadingScreen({ onDone, people, vibe, occasion, location }) {
+export default function LoadingScreen({ onDone, people, vibe,  location }) {
   const [step, setStep] = useState(0)
-  const summary = buildSummary(people, vibe, occasion, location)
+  const summary = buildSummary(people, vibe,  location)
 
   useEffect(() => {
     if (step < LOADING_STEPS.length - 1) {

@@ -1,11 +1,10 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Footer() {
   const navLinks = [
-    { label: 'How It Works', href: '#how-it-works' },
-    { label: 'Features', href: '#features' },
-    { label: 'Example', href: '#example' },
-    { label: 'Why Different', href: '#why-different' },
+    { label: 'Home', to: '/' },
+    { label: 'How It Works', to: '/how-it-works' },
   ]
 
   const legalLinks = [
@@ -50,14 +49,14 @@ export default function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="lg:col-span-2 space-y-4">
-            <a href="#" className="flex items-center gap-2 group w-fit">
+            <Link to="/" className="flex items-center gap-2 group w-fit">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white text-base font-bold shadow-md">
                 🍽
               </div>
               <span className="font-bold text-white text-xl tracking-tight">
                 Social Plate<span className="text-brand-400">Share</span>
               </span>
-            </a>
+            </Link>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
               When everyone wants something different, Social Plate-Share finds the middle ground. AI-powered group food decisions, done in seconds.
             </p>
@@ -81,10 +80,10 @@ export default function Footer() {
             <p className="text-white font-semibold text-sm mb-4">Product</p>
             <ul className="space-y-3">
               {navLinks.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="text-gray-400 hover:text-white text-sm transition-colors">
+                <li key={l.to}>
+                  <Link to={l.to} className="text-gray-400 hover:text-white text-sm transition-colors">
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

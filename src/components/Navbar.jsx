@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -11,9 +12,8 @@ export default function Navbar() {
   }, [])
 
   const links = [
-    { label: 'How It Works', href: '#how-it-works' },
-    { label: 'Features', href: '#features' },
-    { label: 'Why Different', href: '#why-different' },
+    { label: 'Home', to: '/' },
+    { label: 'How It Works', to: '/how-it-works' },
   ]
 
   return (
@@ -27,36 +27,36 @@ export default function Navbar() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <a href="#app" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:scale-105 transition-transform">
               🍽
             </div>
             <span className="font-bold text-gray-900 text-lg tracking-tight">
               Plate<span className="text-brand-500">Share</span>
             </span>
-          </a>
+          </Link>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8">
             {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
+              <Link
+                key={l.to}
+                to={l.to}
                 className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* CTA */}
           <div className="hidden md:flex items-center">
-            <a
-              href="#app"
+            <Link
+              to="/App"
               className="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
             >
               Start Here →
-            </a>
+            </Link>
           </div>
 
           {/* Mobile hamburger */}
@@ -83,23 +83,23 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-t border-gray-100 shadow-lg">
           <div className="px-4 py-4 space-y-3">
             {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
+              <Link
+                key={l.to}
+                to={l.to}
                 onClick={() => setMenuOpen(false)}
                 className="block text-sm font-medium text-gray-700 hover:text-brand-500 py-1 transition-colors"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
             <div className="pt-3 border-t border-gray-100">
-              <a
-                href="#app"
+              <Link
+                to="/#app"
                 onClick={() => setMenuOpen(false)}
                 className="block w-full text-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold"
               >
                 Start Here →
-              </a>
+              </Link>
             </div>
           </div>
         </div>

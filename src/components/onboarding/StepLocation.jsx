@@ -26,7 +26,7 @@ export default function StepLocation({ value, onChange, onNext }) {
           Where are you?
         </h2>
         <p className="text-gray-500 text-base">
-          We'll find real restaurants nearby that work for your whole group.
+          We'll find restaraunts nearby your approximate location.
         </p>
       </div>
 
@@ -96,7 +96,7 @@ export default function StepLocation({ value, onChange, onNext }) {
         disabled={!value.trim()}
         className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-base shadow-lg shadow-brand-500/25 hover:shadow-xl hover:scale-[1.02] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
       >
-        Next — Add your group
+        Add your group
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
         </svg>
