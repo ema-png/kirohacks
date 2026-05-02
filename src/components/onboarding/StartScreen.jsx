@@ -18,10 +18,6 @@ export default function StartScreen({ onStart }) {
 
       {/* Headline */}
       <div className="space-y-3 max-w-md">
-        <div className="inline-flex items-center gap-2 bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
-          AI-Powered Group Food Mediator
-        </div>
         <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-gray-900 leading-tight">
           Stop arguing about
           <br />
@@ -45,16 +41,7 @@ export default function StartScreen({ onStart }) {
       </button>
 
       {/* Trust pills */}
-      <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-400">
-        {['Free to use', 'No account needed', 'Works for 2–10 people'].map((t) => (
-          <span key={t} className="flex items-center gap-1.5">
-            <svg className="w-3.5 h-3.5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-            {t}
-          </span>
-        ))}
-      </div>
+      
     </div>
   )
 }

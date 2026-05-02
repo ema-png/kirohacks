@@ -12,18 +12,10 @@ export default function HowItWorks() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 bg-brand-50 border border-brand-200 text-brand-700 text-sm font-semibold px-4 py-2 rounded-full">
-            ⚡ Ridiculously simple
-          </div>
           <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">
-            From chaos to{' '}
-            <span className="text-brand-500">consensus</span>
-            <br />
-            in four steps.
+            Chaos → {' '}
+            <span className="text-brand-500"> Consensus</span>
           </h2>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            No spreadsheets. No voting. No arguments. Just tell the AI what everyone needs.
-          </p>
         </div>
 
         {/* Steps */}
@@ -64,9 +56,6 @@ export default function HowItWorks() {
         <div className="mt-16 bg-gradient-to-r from-brand-50 to-amber-50 rounded-3xl border border-brand-100 p-8 text-center">
           <p className="text-2xl font-black text-gray-900 mb-2">
             Average decision time: <span className="text-brand-500">28 seconds.</span>
-          </p>
-          <p className="text-gray-500">
-            Down from the industry average of "we never actually decided and just got pizza again."
           </p>
         </div>
       </div>
