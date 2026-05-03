@@ -4,13 +4,13 @@ import Footer from '../components/Footer'
 
 export default function HowItWorksPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <main className="flex flex-1 flex-col pt-16 pb-49 sm:pb-49 min-h-[calc(100vh-4rem)]">
+    <div className="relative flex min-h-screen flex-col bg-howit-wash">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/40 via-plate-peach-fuzz/25 to-accent-50/40" />
+      <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-40" />
+      <main className="relative flex min-h-[calc(100vh-4rem)] flex-1 flex-col pt-16 pb-4 sm:pb-5">
         <HowItWorks />
       </main>
-      <div className="mt-16">
-    <Footer />
-  </div>
+      <Footer />
     </div>
   )
 }

@@ -59,17 +59,15 @@ export default function LoadingScreen({ onDone, people, vibe, cuisine = [], loca
 
   return (
     <div className="mx-auto flex h-full w-full max-w-3xl flex-col items-center justify-center gap-6 px-4 sm:px-6">
-      {/* Animated icon */}
       <div className="relative shrink-0">
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-4xl shadow-2xl shadow-brand-500/30 animate-pulse-slow">
+        <div className="flex h-20 w-20 animate-pulse-slow items-center justify-center rounded-3xl bg-accent-500 text-4xl text-white shadow-soft">
           🤖
         </div>
-        <div className="absolute -inset-3 rounded-[2rem] border-2 border-brand-300/30 animate-ping" style={{ animationDuration: '1.5s' }} />
+        <div className="absolute -inset-3 animate-ping rounded-[2rem] border-2 border-accent-300/50" style={{ animationDuration: '1.5s' }} />
       </div>
 
-      {/* Group summary card */}
-      <div className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Your group's brief</p>
+      <div className="w-full rounded-2xl border border-plate-peach bg-white/90 p-4 shadow-soft backdrop-blur-sm">
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent-600">Your group's brief</p>
 
         {/* People chips */}
         <div className="flex flex-wrap gap-2 mb-3">
@@ -85,12 +83,12 @@ export default function LoadingScreen({ onDone, people, vibe, cuisine = [], loca
               <div key={p.id} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border ${color.border} ${color.bg}`}>
                 <span className="text-sm">{AVATARS[i % AVATARS.length]}</span>
                 <div>
-                  <p className="text-xs font-bold text-gray-800 leading-none">{p.name || `Person ${i + 1}`}</p>
+                  <p className="text-xs font-bold leading-none text-slate-800">{p.name || `Person ${i + 1}`}</p>
                   {tags.length > 0 && (
-                    <p className="text-xs text-gray-400 leading-none mt-0.5">{tags.join(', ')}</p>
+                    <p className="mt-0.5 text-xs leading-none text-slate-500">{tags.join(', ')}</p>
                   )}
                   {p.budget && (
-                    <p className="text-xs text-brand-600 font-semibold leading-none mt-0.5">{p.budget}</p>
+                    <p className="mt-0.5 text-xs font-semibold leading-none text-orange-600">{p.budget}</p>
                   )}
                 </div>
               </div>
@@ -99,13 +97,12 @@ export default function LoadingScreen({ onDone, people, vibe, cuisine = [], loca
         </div>
 
         {/* Natural language summary */}
-        <p className="text-xs text-gray-500 leading-relaxed italic border-t border-gray-100 pt-3">
+        <p className="border-t border-plate-peach pt-3 text-xs italic leading-relaxed text-slate-600">
           "{summary}"
         </p>
       </div>
 
-      {/* Loading steps */}
-      <div className="space-y-2.5 w-full">
+      <div className="w-full space-y-2.5">
         {LOADING_STEPS.map((s, i) => (
           <div
             key={i}
@@ -113,12 +110,12 @@ export default function LoadingScreen({ onDone, people, vibe, cuisine = [], loca
               i < step ? 'opacity-35' : i === step ? 'opacity-100' : 'opacity-15'
             }`}
           >
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 transition-all duration-300 ${
-              i < step ? 'bg-green-100 text-green-700' : i === step ? 'bg-brand-100' : 'bg-gray-100'
+            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm transition-all duration-300 ${
+              i < step ? 'bg-accent-100 text-accent-800' : i === step ? 'bg-brand-100 text-brand-800' : 'bg-slate-100 text-slate-400'
             }`}>
               {i < step ? '✓' : s.icon}
             </div>
-            <span className={`text-sm font-medium flex-1 ${i === step ? 'text-gray-900' : 'text-gray-400'}`}>
+            <span className={`flex-1 text-sm font-medium ${i === step ? 'text-slate-900' : 'text-slate-400'}`}>
               {s.text}
             </span>
             {i === step && (
@@ -126,7 +123,7 @@ export default function LoadingScreen({ onDone, people, vibe, cuisine = [], loca
                 {[0, 1, 2].map(d => (
                   <div
                     key={d}
-                    className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-bounce"
+                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-500"
                     style={{ animationDelay: `${d * 150}ms` }}
                   />
                 ))}

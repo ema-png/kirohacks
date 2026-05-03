@@ -9,7 +9,7 @@ export default function StartScreen({ onStart }) {
   const rowItems = useStickers ? stickerItems : DEFAULT_START_EMOJIS.map((emoji) => ({ emoji }))
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center px-6 gap-8">
+    <div className="flex h-full flex-col items-center justify-center gap-8 px-6 text-center">
       {/* Stickers (image URLs) or default emojis — edit src/data/startStickers.js */}
       <div className={`flex gap-5 ${useStickers ? 'items-center' : 'text-5xl sm:text-6xl'}`}>
         {rowItems.map((item, i) => (
@@ -34,23 +34,23 @@ export default function StartScreen({ onStart }) {
         ))}
       </div>
 
-      {/* Headline */}
-      <div className="space-y-3 max-w-md">
-        <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-gray-900 leading-tight">
+      <div className="max-w-md space-y-4">
+        <h1 className="font-display text-4xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl">
           Stop arguing about
           <br />
-          <span className="text-brand-500">what to eat.</span>
+          <span className="text-brand-600">
+            what to eat.
+          </span>
         </h1>
-        <p className="text-gray-500 text-base leading-relaxed">
+        <p className="text-base leading-relaxed text-slate-600">
           Tell us where you are and what everyone wants.
           We'll find a spot that works for the whole group.
         </p>
       </div>
 
-      {/* CTA */}
       <button
         onClick={onStart}
-        className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-lg shadow-xl shadow-brand-500/30 hover:shadow-2xl hover:shadow-brand-500/40 hover:scale-105 transition-all duration-200"
+        className="group flex items-center gap-3 rounded-2xl bg-brand-500 px-8 py-4 text-lg font-bold text-white shadow-lift transition-all duration-200 hover:bg-brand-600"
       >
         Start Here
         <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

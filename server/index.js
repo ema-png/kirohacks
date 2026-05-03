@@ -277,7 +277,7 @@ app.post("/api/rank", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-const server = app.listen(PORT, () => console.log(`PlateShare API running on :${PORT}`));
+const server = app.listen(PORT, () => console.log(`NoBeef API running on :${PORT}`));
 
 server.on("error", (err) => {
   if (err.code === "EADDRINUSE") {

@@ -77,21 +77,19 @@ export default function StepLocation({ value, onChange, onNext }) {
 
   return (
     <div className="mx-auto flex h-full w-full max-w-3xl flex-col justify-center gap-6 px-4 py-8 sm:px-6">
-      {/* Header */}
       <div className="space-y-2">
-        <p className="text-xs font-bold text-brand-500 uppercase tracking-widest">Step 1 of 4</p>
-        <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent-600">Step 1 of 4</p>
+        <h2 className="font-display text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
           Where are you?
         </h2>
-        <p className="text-gray-500 text-base">
+        <p className="text-base text-slate-600">
           We'll find real restaurants nearby that work for your whole group.
         </p>
       </div>
 
-      {/* Input + autocomplete */}
       <div className="relative">
-        <div className={`flex items-center gap-3 bg-white border-2 rounded-2xl px-5 py-4 shadow-sm transition-all duration-200 ${
-          showSuggestions && suggestions.length > 0 ? 'border-brand-400 ring-4 ring-brand-100 rounded-b-none' : 'border-gray-200 focus-within:border-brand-400 focus-within:ring-4 focus-within:ring-brand-100'
+        <div className={`flex items-center gap-3 rounded-2xl border-2 bg-white/90 px-5 py-4 shadow-soft backdrop-blur-sm transition-all duration-200 ${
+          showSuggestions && suggestions.length > 0 ? 'rounded-b-none border-accent-500 ring-4 ring-accent-100' : 'border-slate-200/80 focus-within:border-accent-500 focus-within:ring-4 focus-within:ring-accent-100'
         }`}>
           <span className="text-xl shrink-0">📍</span>
           <input
@@ -101,12 +99,12 @@ export default function StepLocation({ value, onChange, onNext }) {
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             placeholder="City, neighborhood, or address…"
-            className="flex-1 text-base text-gray-800 placeholder-gray-400 bg-transparent focus:outline-none font-medium"
+            className="flex-1 border-0 bg-transparent text-base font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0"
             autoFocus
           />
           {value && (
             <button onClick={() => { onChange(''); setSuggestions([]) }}
-              className="text-gray-300 hover:text-gray-500 transition-colors text-xl leading-none">
+              className="text-xl leading-none text-slate-300 transition-colors hover:text-slate-500">
               ×
             </button>
           )}
@@ -114,15 +112,15 @@ export default function StepLocation({ value, onChange, onNext }) {
 
         {/* Autocomplete dropdown */}
         {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute top-full left-0 right-0 bg-white border-2 border-t-0 border-brand-400 rounded-b-2xl shadow-xl overflow-hidden z-20 max-h-64 overflow-y-auto">
+          <div className="absolute left-0 right-0 top-full z-20 max-h-64 overflow-y-auto overflow-hidden rounded-b-2xl border-2 border-t-0 border-accent-500 bg-white/95 shadow-soft backdrop-blur-md">
             {suggestions.map((s, i) => (
               <button
                 key={i}
                 onMouseDown={() => handleSelect(s)}
-                className="w-full flex items-start gap-3 px-5 py-3 text-left hover:bg-brand-50 transition-colors border-b border-gray-50 last:border-0"
+                className="flex w-full items-start gap-3 border-b border-slate-50 px-5 py-3 text-left transition-colors last:border-0 hover:bg-accent-50"
               >
                 <span className="text-base shrink-0 mt-0.5">📍</span>
-                <p className="text-sm text-gray-700 leading-snug">{s.label}</p>
+                <p className="text-sm leading-snug text-slate-700">{s.label}</p>
               </button>
             ))}
           </div>
@@ -134,11 +132,11 @@ export default function StepLocation({ value, onChange, onNext }) {
         <button
           onClick={handleGPS}
           disabled={locating}
-          className="flex items-center gap-2 text-sm font-semibold text-brand-500 hover:text-brand-700 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 text-sm font-semibold text-accent-600 transition-colors hover:text-brand-600 disabled:opacity-50"
         >
           {locating ? (
             <>
-              <div className="w-4 h-4 border-2 border-brand-400 border-t-transparent rounded-full animate-spin" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent-400 border-t-transparent" />
               Getting your location…
             </>
           ) : (
@@ -158,7 +156,7 @@ export default function StepLocation({ value, onChange, onNext }) {
       <button
         onClick={onNext}
         disabled={!value.trim()}
-        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-base shadow-lg shadow-brand-500/25 hover:shadow-xl hover:scale-[1.02] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 py-4 text-base font-bold text-white shadow-soft transition-all duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-40"
       >
         Next — Set the vibe
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

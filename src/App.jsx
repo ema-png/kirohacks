@@ -7,7 +7,7 @@ import HowItWorksPage from './pages/HowItWorksPage'
 
 export default function App() {
   return (
-    <div className="min-w-0 w-full">
+    <div className="min-h-screen min-w-0 w-full bg-transparent">
       <ScrollToHash />
       <Navbar />
       <Routes>

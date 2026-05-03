@@ -8,13 +8,14 @@ export default function Hero() {
       className="relative overflow-hidden"
       style={{ height: 'calc(100vh - 64px)', marginTop: '64px' }}
     >
-      {/* Subtle background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-orange-50/30 pointer-events-none" />
-      <div className="absolute top-0 -left-32 w-96 h-96 bg-brand-200/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 -right-32 w-96 h-96 bg-accent-200/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 bg-hero-wash" />
+      <div className="pointer-events-none absolute inset-0 bg-palette-mesh opacity-55" />
+      <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-50" />
+      <div className="pointer-events-none absolute left-[8%] top-20 h-64 w-64 rounded-full bg-plate-peach-fuzz/70 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-16 right-[5%] h-72 w-72 rounded-full bg-accent-200/45 blur-3xl" />
+      <div className="pointer-events-none absolute right-1/4 top-1/2 h-48 w-48 -translate-y-1/2 rounded-full bg-brand-300/35 blur-3xl" />
 
-      {/* Onboarding flow fills the full viewport height */}
-      <div className="relative mx-auto h-full w-full max-w-none px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
+      <div className="relative mx-auto h-full w-full max-w-none px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
         <OnboardingFlow />
       </div>
     </section>

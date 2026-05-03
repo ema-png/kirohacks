@@ -28,17 +28,17 @@ function ProgressBar({ step }) {
   const activeIndex = steps.findIndex((s) => s.id === displayStep);
 
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b border-gray-100 bg-white px-4 py-3.5 sm:gap-3 sm:px-6 lg:px-10 xl:px-14 2xl:px-20 shrink-0">
+    <div className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b border-plate-peach bg-white/80 px-4 py-3.5 backdrop-blur-md sm:gap-3 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
       {steps.map((s, i) => (
         <React.Fragment key={s.id}>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex shrink-0 items-center gap-2">
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 sm:h-9 sm:w-9 sm:text-base ${
                 i < activeIndex
-                  ? "bg-green-500 text-white"
+                  ? "bg-accent-500 text-white shadow-soft"
                   : i === activeIndex
-                    ? "bg-brand-500 text-white"
-                    : "bg-gray-100 text-gray-400"
+                    ? "bg-brand-500 text-white shadow-soft"
+                    : "bg-slate-100 text-slate-400"
               }`}
             >
               {i < activeIndex ? "✓" : i + 1}
@@ -46,10 +46,10 @@ function ProgressBar({ step }) {
             <span
               className={`text-sm font-semibold transition-colors sm:text-base ${
                 i === activeIndex
-                  ? "text-gray-900"
+                  ? "text-slate-900"
                   : i < activeIndex
-                    ? "text-green-600"
-                    : "text-gray-400"
+                    ? "text-accent-700"
+                    : "text-slate-400"
               }`}
             >
               {s.label}
@@ -57,7 +57,7 @@ function ProgressBar({ step }) {
           </div>
           {i < steps.length - 1 && (
             <div
-              className={`min-w-[0.75rem] flex-1 basis-4 rounded-full transition-all duration-500 h-1 sm:min-w-4 sm:basis-8 ${i < activeIndex ? "bg-green-400" : "bg-gray-100"}`}
+              className={`h-1 min-w-[0.75rem] flex-1 basis-4 rounded-full transition-all duration-500 sm:min-w-4 sm:basis-8 ${i < activeIndex ? "bg-accent-300" : "bg-slate-200/80"}`}
             />
           )}
         </React.Fragment>
@@ -111,7 +111,7 @@ export default function OnboardingFlow() {
   const showProgress = step !== STEPS.START;
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/90 bg-gradient-to-b from-white/92 via-white/85 to-brand-50/25 shadow-soft backdrop-blur-xl">
       {showProgress && <ProgressBar step={step} />}
 
       <div className="flex-1 overflow-hidden min-h-0">

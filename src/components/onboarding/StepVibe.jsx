@@ -3,91 +3,67 @@ import React from 'react'
 const VIBE_OPTIONS = [
   {
     id: 'casual',
-    emoji: '😎',
     label: 'Casual',
-    desc: 'Relaxed, no dress code, just good food',
+    //desc: 'Relaxed, no dress code, just good food',
     bg: 'bg-amber-50',
     border: 'border-amber-300',
     activeBg: 'bg-amber-500',
-    activeText: 'text-white',
-    checkColor: 'bg-amber-500',
   },
   {
     id: 'fancy',
-    emoji: '🥂',
     label: 'Fancy',
-    desc: 'Sit-down, upscale, special occasion vibes',
-    bg: 'bg-violet-50',
-    border: 'border-violet-300',
-    activeBg: 'bg-violet-500',
-    activeText: 'text-white',
-    checkColor: 'bg-violet-500',
+    //desc: 'Sit-down, upscale, special occasion vibes',
+    bg: 'bg-cyan-50',
+    border: 'border-cyan-300',
+    activeBg: 'bg-cyan-600',
   },
   {
     id: 'sit-down',
-    emoji: '🪑',
     label: 'Sit-Down',
-    desc: 'Table service, take your time, no rush',
-    bg: 'bg-blue-50',
-    border: 'border-blue-300',
-    activeBg: 'bg-blue-500',
-    activeText: 'text-white',
-    checkColor: 'bg-blue-500',
+    //desc: 'Table service, take your time, no rush',
+    bg: 'bg-sky-50',
+    border: 'border-sky-300',
+    activeBg: 'bg-sky-500',
   },
   {
     id: 'fast-casual',
-    emoji: '⚡',
     label: 'Fast Casual',
-    desc: 'Order at the counter, quick and easy',
+    //desc: 'Order at the counter, quick and easy',
     bg: 'bg-orange-50',
     border: 'border-orange-300',
     activeBg: 'bg-orange-500',
-    activeText: 'text-white',
-    checkColor: 'bg-orange-500',
   },
   {
     id: 'drive-thru',
-    emoji: '🚗',
     label: 'Drive-Thru',
-    desc: 'Stay in the car, grab and go',
-    bg: 'bg-green-50',
-    border: 'border-green-300',
-    activeBg: 'bg-green-500',
-    activeText: 'text-white',
-    checkColor: 'bg-green-500',
-  },
-  {
-    id: 'takeout',
-    emoji: '🥡',
-    label: 'Takeout / Delivery',
-    desc: 'Eat at home or wherever you are',
-    bg: 'bg-rose-50',
-    border: 'border-rose-300',
-    activeBg: 'bg-rose-500',
-    activeText: 'text-white',
-    checkColor: 'bg-rose-500',
-  },
-  {
-    id: 'outdoor',
-    emoji: '🌿',
-    label: 'Outdoor Seating',
-    desc: 'Patio, rooftop, or park vibes',
+    //desc: 'Stay in the car, grab and go',
     bg: 'bg-emerald-50',
     border: 'border-emerald-300',
     activeBg: 'bg-emerald-500',
-    activeText: 'text-white',
-    checkColor: 'bg-emerald-500',
+  },
+  {
+    id: 'takeout',
+    label: 'Takeout / Delivery',
+    //desc: 'Eat at home or wherever you are',
+    bg: 'bg-rose-50',
+    border: 'border-rose-300',
+    activeBg: 'bg-rose-500',
+  },
+  {
+    id: 'outdoor',
+    label: 'Outdoor Seating',
+    //desc: 'Patio, rooftop, or park vibes',
+    bg: 'bg-lime-50',
+    border: 'border-lime-300',
+    activeBg: 'bg-lime-600',
   },
   {
     id: 'bar',
-    emoji: '🍻',
     label: 'Bar / Drinks Too',
-    desc: 'Food and drinks, social atmosphere',
+    //desc: 'Food and drinks, social atmosphere',
     bg: 'bg-yellow-50',
     border: 'border-yellow-300',
     activeBg: 'bg-yellow-500',
-    activeText: 'text-white',
-    checkColor: 'bg-yellow-500',
   },
 ]
 
@@ -121,10 +97,10 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-6 pt-8 pb-4 shrink-0">
-        <p className="text-xs font-bold text-brand-500 uppercase tracking-widest mb-1">Step 2 of 4</p>
-        <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">What's the vibe?</h2>
-        <p className="text-gray-500 text-sm mt-1">
+      <div className="shrink-0 px-6 pb-4 pt-8">
+        <p className="mb-1.5 text-sm font-bold uppercase tracking-wider text-accent-600">Step 2 of 4</p>
+        <h2 className="text-2xl font-black tracking-tight text-gray-950 sm:text-3xl">What's the vibe?</h2>
+        <p className="mt-1.5 text-base leading-snug text-gray-900">
           Set dining style and cuisine, then we&apos;ll collect each person&apos;s details.
         </p>
       </div>
@@ -134,7 +110,10 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
 
         {/* Vibe grid */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Dining style <span className="text-gray-300 font-normal normal-case">(pick all that apply)</span></p>
+          <p className="mb-3 text-sm font-bold uppercase tracking-wider text-gray-950 sm:text-base">
+            Dining style{' '}
+            <span className="font-semibold normal-case text-gray-800">(pick all that apply)</span>
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {VIBE_OPTIONS.map((v) => {
               const isSelected = vibe.includes(v.id)
@@ -145,23 +124,17 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
                   onClick={() => onVibeChange(
                     isSelected ? vibe.filter(x => x !== v.id) : [...vibe, v.id]
                   )}
-                  className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 text-center transition-all duration-150 ${
+                  className={`relative flex flex-col items-center gap-1 p-4 rounded-2xl border-2 text-center transition-all duration-150 ${
                     isSelected
                       ? `${v.activeBg} border-transparent shadow-md scale-[1.02]`
                       : `${v.bg} ${v.border} hover:scale-[1.01] hover:shadow-sm`
                   }`}
                 >
-                  {isSelected && (
-                    <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-white/30 flex items-center justify-center">
-                      <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
-                  <span className="text-2xl">{v.emoji}</span>
                   <div>
-                    <p className={`text-xs font-bold leading-tight ${isSelected ? 'text-white' : 'text-gray-800'}`}>{v.label}</p>
-                    <p className={`text-xs mt-0.5 leading-tight hidden sm:block ${isSelected ? 'text-white/80' : 'text-gray-400'}`}>{v.desc}</p>
+                    <p className={`text-sm font-bold leading-tight sm:text-base ${isSelected ? 'text-white' : 'text-gray-950'}`}>{v.label}</p>
+                    {v.desc && (
+                      <p className={`mt-0.5 hidden text-xs leading-snug sm:block sm:text-sm ${isSelected ? 'text-white/90' : 'text-gray-800'}`}>{v.desc}</p>
+                    )}
                   </div>
                 </button>
               )
@@ -171,8 +144,9 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
 
         {/* Cuisine */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-            Cuisine <span className="text-gray-300 font-normal normal-case">(pick all that apply)</span>
+          <p className="mb-3 text-sm font-bold uppercase tracking-wider text-gray-950 sm:text-base">
+            Cuisine{' '}
+            <span className="font-semibold normal-case text-gray-800">(pick all that apply)</span>
           </p>
           <div className="flex flex-wrap gap-2">
             {CUISINE_OPTIONS.map((c) => {
@@ -184,13 +158,12 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
                   onClick={() => onCuisineChange(
                     isSelected ? cuisine.filter((x) => x !== c.id) : [...cuisine, c.id]
                   )}
-                  className={`flex items-center gap-2 rounded-full border-2 px-3.5 py-2 text-xs font-semibold transition-all duration-150 ${
+                  className={`flex items-center rounded-full border-2 px-4 py-2.5 text-sm font-semibold transition-all duration-150 ${
                     isSelected
                       ? 'border-gray-900 bg-gray-900 text-white shadow-md'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                      : 'border-gray-400 bg-white text-gray-950 hover:border-gray-500'
                   }`}
                 >
-                  <span>{c.emoji}</span>
                   {c.label}
                 </button>
               )
@@ -202,26 +175,26 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
             value={otherCuisine}
             onChange={(e) => onOtherCuisineChange(e.target.value)}
             placeholder="Other cuisine (e.g. Ethiopian, Peruvian, Dim Sum…)"
-            className="mt-3 w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100 transition-all"
+            className="mt-3 w-full rounded-xl border border-gray-400 bg-white px-3 py-3 text-sm text-gray-950 placeholder:text-gray-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 transition-all"
           />
         </div>
 
         {/* Selected summary */}
         {(vibe.length > 0 || cuisine.length > 0 || otherCuisine.trim()) && (
-          <div className="bg-brand-50 border border-brand-100 rounded-2xl px-4 py-3 flex items-start gap-3">
-            <div className="space-y-2">
+          <div className="flex items-start gap-3 rounded-2xl border border-brand-300 bg-brand-50 px-4 py-4">
+            <div className="space-y-3">
               {vibe.length > 0 && (
                 <div>
-                  <p className="text-xs font-bold text-brand-700 mb-0.5">Vibe</p>
-                  <p className="text-sm text-brand-600">
+                  <p className="mb-1 text-sm font-bold uppercase tracking-wide text-brand-900">Vibe</p>
+                  <p className="text-base font-semibold leading-snug text-brand-900">
                     {vibe.map((id) => VIBE_OPTIONS.find((v) => v.id === id)?.label).filter(Boolean).join(' · ')}
                   </p>
                 </div>
               )}
               {(cuisine.length > 0 || otherCuisine.trim()) && (
                 <div>
-                  <p className="text-xs font-bold text-brand-700 mb-0.5">Cuisine</p>
-                  <p className="text-sm text-brand-600">
+                  <p className="mb-1 text-sm font-bold uppercase tracking-wide text-brand-900">Cuisine</p>
+                  <p className="text-base font-semibold leading-snug text-brand-900">
                     {[
                       ...cuisine.map((id) => CUISINE_OPTIONS.find((c) => c.id === id)?.label),
                       otherCuisine.trim() || null,
@@ -235,24 +208,18 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
       </div>
 
       {/* Footer */}
-      <div className="px-6 pb-8 pt-3 shrink-0 flex gap-3">
+      <div className="flex shrink-0 gap-3 px-6 pb-8 pt-3">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 px-5 py-3.5 rounded-2xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+          className="flex items-center justify-center rounded-2xl border-2 border-gray-400 px-5 py-3.5 text-base font-semibold text-gray-950 transition-all hover:bg-gray-50"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
-          </svg>
           Back
         </button>
         <button
           onClick={onNext}
-          className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-sm shadow-lg shadow-brand-500/25 hover:shadow-xl hover:scale-[1.02] transition-all duration-200"
+          className="flex flex-1 items-center justify-center rounded-2xl bg-brand-600 py-3.5 text-base font-bold text-white shadow-soft transition-all duration-200 hover:bg-brand-700"
         >
           Add your preferences
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
         </button>
       </div>
     </div>
