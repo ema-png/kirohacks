@@ -3,103 +3,104 @@ import { rankRestaurants } from "../../api/rankRestaurants";
 import { PERSON_COLORS, AVATARS } from "./StepPeople";
 import { VIBE_OPTIONS, CUISINE_OPTIONS } from "./StepVibe";
 
-function FilterSummaryCard({ location, people, vibe, cuisine }) {
+function FilterSummaryCard({ location, people, vibe, cuisine, otherCuisine = '' }) {
+  const [open, setOpen] = useState(false);
+
   const vibeLabels = (vibe || [])
     .map((id) => VIBE_OPTIONS.find((v) => v.id === id)?.label)
     .filter(Boolean);
-  const cuisineLabels = (cuisine || [])
-    .filter((id) => id && id !== "no_preference")
-    .map((id) => CUISINE_OPTIONS.find((c) => c.id === id)?.label)
-    .filter(Boolean);
+  const cuisineLabels = [
+    ...(cuisine || [])
+      .filter((id) => id && id !== "no_preference")
+      .map((id) => CUISINE_OPTIONS.find((c) => c.id === id)?.label)
+      .filter(Boolean),
+    ...(otherCuisine.trim() ? [otherCuisine.trim()] : []),
+  ];
 
   return (
-    <div className="mt-3 rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white px-4 py-3 shadow-sm">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
-        Filters used for this search
-      </p>
+    <div className="mt-3 rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white shadow-sm overflow-hidden">
+      {/* Toggle header */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors"
+      >
+        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+          Filters used for this search
+        </p>
+        <svg
+          className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
 
-      <div className="flex flex-wrap gap-2 mb-3">
-        {location?.trim() && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700">
-            <span aria-hidden>📍</span>
-            {location.trim()}
-          </span>
-        )}
-        {vibeLabels.map((label) => (
-          <span
-            key={label}
-            className="inline-flex items-center rounded-full bg-violet-50 border border-violet-200 px-2.5 py-1 text-xs font-medium text-violet-800"
-          >
-            {label}
-          </span>
-        ))}
-        {cuisineLabels.map((label) => (
-          <span
-            key={label}
-            className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-2.5 py-1 text-xs font-medium text-amber-900"
-          >
-            {label}
-          </span>
-        ))}
-        {!location?.trim() && vibeLabels.length === 0 && cuisineLabels.length === 0 && (
-          <span className="text-xs text-gray-400">Location & style from your flow</span>
-        )}
-      </div>
-
-      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
-        Group ({people.length})
-      </p>
-      <ul className="space-y-2">
-        {people.map((person, i) => {
-          const name = person.name?.trim() || `Person ${i + 1}`;
-          const diet = [...(person.diet || []), person.otherDiet].filter(Boolean);
-          const flavors = [...(person.flavors || []), person.otherFlavors].filter(Boolean);
-          const avoid = [...(person.avoid || []), person.otherAvoid].filter(Boolean);
-          const color = PERSON_COLORS[i % PERSON_COLORS.length];
-          return (
-            <li
-              key={person.id}
-              className={`flex gap-2.5 rounded-xl border px-2.5 py-2 text-xs ${color.border} ${color.bg}`}
-            >
-              <span className="text-base shrink-0 leading-none pt-0.5">
-                {AVATARS[i % AVATARS.length]}
+      {/* Collapsible content */}
+      {open && (
+        <div className="px-4 pb-4">
+          <div className="flex flex-wrap gap-2 mb-3">
+            {location?.trim() && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700">
+                <span aria-hidden>📍</span>
+                {location.trim()}
               </span>
-              <div className="min-w-0 flex-1 space-y-1">
-                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                  <span className="font-bold text-gray-900">{name}</span>
-                  {person.budget && (
-                    <span className="font-semibold text-brand-600">{person.budget}</span>
-                  )}
-                </div>
-                {diet.length > 0 && (
-                  <p className="text-gray-600 leading-snug">
-                    <span className="text-gray-400 font-medium">Diet:</span>{" "}
-                    {diet.slice(0, 6).join(", ")}
-                    {diet.length > 6 ? "…" : ""}
-                  </p>
-                )}
-                {flavors.length > 0 && (
-                  <p className="text-gray-600 leading-snug">
-                    <span className="text-gray-400 font-medium">Cravings:</span>{" "}
-                    {flavors.slice(0, 5).join(", ")}
-                    {flavors.length > 5 ? "…" : ""}
-                  </p>
-                )}
-                {avoid.length > 0 && (
-                  <p className="text-gray-600 leading-snug">
-                    <span className="text-gray-400 font-medium">Avoid:</span>{" "}
-                    {avoid.slice(0, 4).join(", ")}
-                    {avoid.length > 4 ? "…" : ""}
-                  </p>
-                )}
-                {!person.budget && diet.length === 0 && flavors.length === 0 && avoid.length === 0 && (
-                  <p className="text-gray-400 italic">No preferences set</p>
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+            )}
+            {vibeLabels.map((label) => (
+              <span key={label} className="inline-flex items-center rounded-full bg-violet-50 border border-violet-200 px-2.5 py-1 text-xs font-medium text-violet-800">
+                {label}
+              </span>
+            ))}
+            {cuisineLabels.map((label) => (
+              <span key={label} className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-2.5 py-1 text-xs font-medium text-amber-900">
+                {label}
+              </span>
+            ))}
+          </div>
+
+          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+            Group ({people.length})
+          </p>
+          <ul className="space-y-2">
+            {people.map((person, i) => {
+              const name = person.name?.trim() || `Person ${i + 1}`;
+              const diet = [...(person.diet || []), person.otherDiet].filter(Boolean);
+              const flavors = [...(person.flavors || []), person.otherFlavors].filter(Boolean);
+              const avoid = [...(person.avoid || []), person.otherAvoid].filter(Boolean);
+              const color = PERSON_COLORS[i % PERSON_COLORS.length];
+              return (
+                <li key={person.id} className={`flex gap-2.5 rounded-xl border px-2.5 py-2 text-xs ${color.border} ${color.bg}`}>
+                  <span className="text-base shrink-0 leading-none pt-0.5">{AVATARS[i % AVATARS.length]}</span>
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                      <span className="font-bold text-gray-900">{name}</span>
+                      {person.budget && <span className="font-semibold text-brand-600">{person.budget}</span>}
+                    </div>
+                    {diet.length > 0 && (
+                      <p className="text-gray-600 leading-snug">
+                        <span className="text-gray-400 font-medium">Diet:</span> {diet.slice(0, 6).join(", ")}{diet.length > 6 ? "…" : ""}
+                      </p>
+                    )}
+                    {flavors.length > 0 && (
+                      <p className="text-gray-600 leading-snug">
+                        <span className="text-gray-400 font-medium">Cravings:</span> {flavors.slice(0, 5).join(", ")}{flavors.length > 5 ? "…" : ""}
+                      </p>
+                    )}
+                    {avoid.length > 0 && (
+                      <p className="text-gray-600 leading-snug">
+                        <span className="text-gray-400 font-medium">Avoid:</span> {avoid.slice(0, 4).join(", ")}{avoid.length > 4 ? "…" : ""}
+                      </p>
+                    )}
+                    {!person.budget && diet.length === 0 && flavors.length === 0 && avoid.length === 0 && (
+                      <p className="text-gray-400 italic">No preferences set</p>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
@@ -166,7 +167,7 @@ function PersonMatches({ person, restaurant, index }) {
 }
 
 // ─── Single restaurant card ───────────────────────────────────────────────────
-function RestaurantCard({ restaurant, people, rank }) {
+function RestaurantCard({ restaurant, people, rank, cuisine = [], otherCuisine = '' }) {
   const { satisfiedCount, totalPeople, passesHardDiet, reasoning } = restaurant;
   const satisfactionPct = Math.round((satisfiedCount / Math.max(totalPeople, 1)) * 100);
   const isBest = rank === 0;
@@ -216,6 +217,12 @@ function RestaurantCard({ restaurant, people, rank }) {
               </span>
               <span className="text-xs text-gray-400">{restaurant.price}</span>
               <span className="text-xs text-gray-400">{restaurant.address}</span>
+              {restaurant.isOpen === true && (
+                <span className="text-xs font-semibold text-green-600">● Open</span>
+              )}
+              {restaurant.isOpen === false && (
+                <span className="text-xs font-semibold text-red-500">● Closed</span>
+              )}
             </div>
 
             {/* Group satisfaction bar */}
@@ -244,11 +251,24 @@ function RestaurantCard({ restaurant, people, rank }) {
 
         {/* Tags from group preferences */}
         <div className="flex flex-wrap gap-1.5 mt-3">
+          {/* Cuisine tags (preset only) */}
+          {cuisine.map((id) => {
+            const label = CUISINE_OPTIONS.find((c) => c.id === id)?.label;
+            const emoji = CUISINE_OPTIONS.find((c) => c.id === id)?.emoji;
+            if (!label) return null;
+            return (
+              <span key={id} className="text-xs px-3 py-1.5 rounded-full border font-medium bg-gray-100 text-gray-700 border-gray-200">
+                {emoji} {label}
+              </span>
+            );
+          })}
+          {/* Diet tags */}
           {[...new Set(people.flatMap((p) => p.diet || []))].map((d) => (
             <span key={d} className="text-xs px-3 py-1.5 rounded-full border font-medium bg-green-100 text-green-700 border-green-200">
               ✓ {d}
             </span>
           ))}
+          {/* Flavor tags */}
           {[...new Set(people.flatMap((p) => p.flavors || []))].map((t) => (
             <span key={t} className="text-xs px-3 py-1.5 rounded-full border font-medium bg-orange-100 text-orange-700 border-orange-200">
               {t}
@@ -278,7 +298,7 @@ function RestaurantCard({ restaurant, people, rank }) {
 }
 
 // ─── Main Results Step ────────────────────────────────────────────────────────
-export default function StepResults({ location, people, vibe = [], cuisine = [], onReset }) {
+export default function StepResults({ location, people, vibe = [], cuisine = [], otherCuisine = '', onReset }) {
   const [sortBy, setSortBy] = useState("match");
   const [aiData, setAiData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -286,23 +306,9 @@ export default function StepResults({ location, people, vibe = [], cuisine = [],
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-
-    console.log("[StepResults] Fetching with:", {
-      location,
-      people: people.length,
-      vibe,
-      cuisine,
-    });
-
-    rankRestaurants({ people, vibe, cuisine, location })
-      .then((data) => {
-        if (cancelled) return;
-        setAiData(data);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
+    rankRestaurants({ people, vibe, cuisine, otherCuisine, openNow: true, location })
+      .then((data) => { if (!cancelled) setAiData(data); })
+      .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, []);
 
@@ -369,6 +375,7 @@ export default function StepResults({ location, people, vibe = [], cuisine = [],
           people={people}
           vibe={vibe}
           cuisine={cuisine}
+          otherCuisine={otherCuisine}
         />
 
         {/* AI summary banner */}
@@ -382,7 +389,7 @@ export default function StepResults({ location, people, vibe = [], cuisine = [],
           </div>
         )}
 
-        <div className="flex gap-2 mt-3">
+        <div className="flex gap-2 mt-3 flex-wrap">
           {[
             { key: "match", label: "⭐ Best match" },
             { key: "distance", label: "📍 Nearest" },
@@ -403,7 +410,7 @@ export default function StepResults({ location, people, vibe = [], cuisine = [],
 
       <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-3 min-h-0">
         {sorted.map((r, i) => (
-          <RestaurantCard key={r.id} restaurant={r} people={people} rank={i} />
+          <RestaurantCard key={r.id} restaurant={r} people={people} rank={i} cuisine={cuisine} otherCuisine={otherCuisine} />
         ))}
       </div>
     </div>

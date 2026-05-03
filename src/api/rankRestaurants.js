@@ -12,12 +12,12 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
  *   error: string|null
  * }>}
  */
-export async function rankRestaurants({ people, vibe, cuisine = [], location }) {
+export async function rankRestaurants({ people, vibe, cuisine = [], otherCuisine = '', openNow = true, location }) {
   try {
     const res = await fetch(`${API_URL}/api/rank`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ people, vibe, cuisine, location }),
+      body: JSON.stringify({ people, vibe, cuisine, otherCuisine, openNow, location }),
       signal: AbortSignal.timeout(60_000), // 60s — Yelp + AI can take a moment
     });
 

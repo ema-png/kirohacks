@@ -73,6 +73,7 @@ export default function OnboardingFlow() {
   const [coords, setCoords] = useState(null); // { lat, lon }
   const [vibe, setVibe] = useState([]);
   const [cuisine, setCuisine] = useState([]);
+  const [otherCuisine, setOtherCuisine] = useState('');
   const [people, setPeople] = useState([
     newPerson(1, ""),
   ]);
@@ -85,7 +86,8 @@ export default function OnboardingFlow() {
     setCoords(null);
     setVibe([]);
     setCuisine([]);
-    setPeople([newPerson(1, "Person 1"), newPerson(2, "Person 2")]);
+    setOtherCuisine('');
+    setPeople([newPerson(1, "")]);
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
@@ -102,7 +104,8 @@ export default function OnboardingFlow() {
     setCoords(null);
     setVibe([]);
     setCuisine([]);
-    setPeople([newPerson(1, "Person 1"), newPerson(2, "Person 2")]);
+    setOtherCuisine('');
+    setPeople([newPerson(1, "")]);
   };
 
   const showProgress = step !== STEPS.START;
@@ -151,6 +154,8 @@ export default function OnboardingFlow() {
             cuisine={cuisine}
             onVibeChange={setVibe}
             onCuisineChange={setCuisine}
+            otherCuisine={otherCuisine}
+            onOtherCuisineChange={setOtherCuisine}
             onNext={() => setStep(STEPS.PEOPLE)}
             onBack={() => setStep(STEPS.LOCATION)}
           />
@@ -169,6 +174,7 @@ export default function OnboardingFlow() {
             people={people}
             vibe={vibe}
             cuisine={cuisine}
+            otherCuisine={otherCuisine}
             location={location}
           />
         )}
@@ -178,6 +184,7 @@ export default function OnboardingFlow() {
             people={people}
             vibe={vibe}
             cuisine={cuisine}
+            otherCuisine={otherCuisine}
             onReset={handleReset}
           />
         )}

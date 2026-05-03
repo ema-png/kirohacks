@@ -112,10 +112,12 @@ const CUISINE_OPTIONS = [
   { id: 'caribbean', emoji: '🌴', label: 'Caribbean' },
   { id: 'latin', emoji: '🌶️', label: 'Latin' },
   { id: 'breakfast_brunch', emoji: '🥞', label: 'Brunch' },
-  { id: 'no_preference', emoji: '🌍', label: 'No preference' },
+  { id: 'desserts', emoji: '🍰', label: 'Desserts' },
+  { id: 'drinks_na', emoji: '🧋', label: 'Drinks (Non-Alcoholic)' },
 ]
 
-export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange, onNext, onBack }) {
+export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange, otherCuisine, onOtherCuisineChange, onNext, onBack }) {
+  
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -179,18 +181,9 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
                 <button
                   key={c.id}
                   type="button"
-                  onClick={() => {
-                    if (c.id === 'no_preference') {
-                      onCuisineChange(isSelected ? [] : ['no_preference'])
-                      return
-                    }
-                    const withoutNo = cuisine.filter((x) => x !== 'no_preference')
-                    if (isSelected) {
-                      onCuisineChange(withoutNo.filter((x) => x !== c.id))
-                    } else {
-                      onCuisineChange([...withoutNo, c.id])
-                    }
-                  }}
+                  onClick={() => onCuisineChange(
+                    isSelected ? cuisine.filter((x) => x !== c.id) : [...cuisine, c.id]
+                  )}
                   className={`flex items-center gap-2 rounded-full border-2 px-3.5 py-2 text-xs font-semibold transition-all duration-150 ${
                     isSelected
                       ? 'border-gray-900 bg-gray-900 text-white shadow-md'
@@ -203,10 +196,18 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
               )
             })}
           </div>
+          {/* Free-text other cuisine */}
+          <input
+            type="text"
+            value={otherCuisine}
+            onChange={(e) => onOtherCuisineChange(e.target.value)}
+            placeholder="Other cuisine (e.g. Ethiopian, Peruvian, Dim Sum…)"
+            className="mt-3 w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100 transition-all"
+          />
         </div>
 
         {/* Selected summary */}
-        {(vibe.length > 0 || cuisine.length > 0) && (
+        {(vibe.length > 0 || cuisine.length > 0 || otherCuisine.trim()) && (
           <div className="bg-brand-50 border border-brand-100 rounded-2xl px-4 py-3 flex items-start gap-3">
             <div className="space-y-2">
               {vibe.length > 0 && (
@@ -217,14 +218,14 @@ export default function StepVibe({ vibe, cuisine, onVibeChange, onCuisineChange,
                   </p>
                 </div>
               )}
-              {cuisine.length > 0 && (
+              {(cuisine.length > 0 || otherCuisine.trim()) && (
                 <div>
                   <p className="text-xs font-bold text-brand-700 mb-0.5">Cuisine</p>
                   <p className="text-sm text-brand-600">
-                    {cuisine
-                      .map((id) => CUISINE_OPTIONS.find((c) => c.id === id)?.label)
-                      .filter(Boolean)
-                      .join(' · ')}
+                    {[
+                      ...cuisine.map((id) => CUISINE_OPTIONS.find((c) => c.id === id)?.label),
+                      otherCuisine.trim() || null,
+                    ].filter(Boolean).join(' · ')}
                   </p>
                 </div>
               )}
