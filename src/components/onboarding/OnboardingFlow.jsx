@@ -74,8 +74,7 @@ export default function OnboardingFlow() {
   const [vibe, setVibe] = useState([]);
   const [cuisine, setCuisine] = useState([]);
   const [people, setPeople] = useState([
-    newPerson(1, "Person 1"),
-    newPerson(2, "Person 2"),
+    newPerson(1, ""),
   ]);
 
   /** Navbar "Start Here" uses `?step=location` to open step 1 (location) directly. */
