@@ -1,6 +1,108 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { rankRestaurants } from "../../api/rankRestaurants";
 import { PERSON_COLORS, AVATARS } from "./StepPeople";
+import { VIBE_OPTIONS, CUISINE_OPTIONS } from "./StepVibe";
+
+function FilterSummaryCard({ location, people, vibe, cuisine }) {
+  const vibeLabels = (vibe || [])
+    .map((id) => VIBE_OPTIONS.find((v) => v.id === id)?.label)
+    .filter(Boolean);
+  const cuisineLabels = (cuisine || [])
+    .filter((id) => id && id !== "no_preference")
+    .map((id) => CUISINE_OPTIONS.find((c) => c.id === id)?.label)
+    .filter(Boolean);
+
+  return (
+    <div className="mt-3 rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white px-4 py-3 shadow-sm">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+        Filters used for this search
+      </p>
+
+      <div className="flex flex-wrap gap-2 mb-3">
+        {location?.trim() && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700">
+            <span aria-hidden>📍</span>
+            {location.trim()}
+          </span>
+        )}
+        {vibeLabels.map((label) => (
+          <span
+            key={label}
+            className="inline-flex items-center rounded-full bg-violet-50 border border-violet-200 px-2.5 py-1 text-xs font-medium text-violet-800"
+          >
+            {label}
+          </span>
+        ))}
+        {cuisineLabels.map((label) => (
+          <span
+            key={label}
+            className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-2.5 py-1 text-xs font-medium text-amber-900"
+          >
+            {label}
+          </span>
+        ))}
+        {!location?.trim() && vibeLabels.length === 0 && cuisineLabels.length === 0 && (
+          <span className="text-xs text-gray-400">Location & style from your flow</span>
+        )}
+      </div>
+
+      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+        Group ({people.length})
+      </p>
+      <ul className="space-y-2">
+        {people.map((person, i) => {
+          const name = person.name?.trim() || `Person ${i + 1}`;
+          const diet = [...(person.diet || []), person.otherDiet].filter(Boolean);
+          const flavors = [...(person.flavors || []), person.otherFlavors].filter(Boolean);
+          const avoid = [...(person.avoid || []), person.otherAvoid].filter(Boolean);
+          const color = PERSON_COLORS[i % PERSON_COLORS.length];
+          return (
+            <li
+              key={person.id}
+              className={`flex gap-2.5 rounded-xl border px-2.5 py-2 text-xs ${color.border} ${color.bg}`}
+            >
+              <span className="text-base shrink-0 leading-none pt-0.5">
+                {AVATARS[i % AVATARS.length]}
+              </span>
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                  <span className="font-bold text-gray-900">{name}</span>
+                  {person.budget && (
+                    <span className="font-semibold text-brand-600">{person.budget}</span>
+                  )}
+                </div>
+                {diet.length > 0 && (
+                  <p className="text-gray-600 leading-snug">
+                    <span className="text-gray-400 font-medium">Diet:</span>{" "}
+                    {diet.slice(0, 6).join(", ")}
+                    {diet.length > 6 ? "…" : ""}
+                  </p>
+                )}
+                {flavors.length > 0 && (
+                  <p className="text-gray-600 leading-snug">
+                    <span className="text-gray-400 font-medium">Cravings:</span>{" "}
+                    {flavors.slice(0, 5).join(", ")}
+                    {flavors.length > 5 ? "…" : ""}
+                  </p>
+                )}
+                {avoid.length > 0 && (
+                  <p className="text-gray-600 leading-snug">
+                    <span className="text-gray-400 font-medium">Avoid:</span>{" "}
+                    {avoid.slice(0, 4).join(", ")}
+                    {avoid.length > 4 ? "…" : ""}
+                  </p>
+                )}
+                {!person.budget && diet.length === 0 && flavors.length === 0 && avoid.length === 0 && (
+                  <p className="text-gray-400 italic">No preferences set</p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
 
 // ─── Mock Map ────────────────────────────────────────────────────────────────
 function MockMap({ restaurants, selectedId, onSelect }) {
@@ -465,7 +567,7 @@ function RestaurantCard({ restaurant, people, rank, isSelected, onSelect }) {
 }
 
 // ─── Main Results Step ────────────────────────────────────────────────────────
-export default function StepResults({ location, people, vibe = [], onReset }) {
+export default function StepResults({ location, people, vibe = [], cuisine = [], onReset }) {
   const [sortBy, setSortBy] = useState("match");
   const [selectedId, setSelectedId] = useState(null);
   const [aiData, setAiData] = useState(null);
@@ -480,9 +582,10 @@ export default function StepResults({ location, people, vibe = [], onReset }) {
       location,
       people: people.length,
       vibe,
+      cuisine,
     });
 
-    rankRestaurants({ people, vibe, location })
+    rankRestaurants({ people, vibe, cuisine, location })
       .then((data) => {
         console.log("[StepResults] Got data:", {
           ranked: data.ranked?.length,
@@ -524,7 +627,7 @@ export default function StepResults({ location, people, vibe = [], onReset }) {
       <div className="flex flex-col items-center justify-center h-full gap-4 px-6">
         <div className="w-10 h-10 rounded-full border-4 border-brand-200 border-t-brand-500 animate-spin" />
         <p className="text-sm font-semibold text-gray-600">
-          AI is ranking restaurants for your group…
+          Finding restaurants for your group…
         </p>
         <p className="text-xs text-gray-400">
           Checking dietary needs, budgets, and vibes
@@ -594,6 +697,13 @@ export default function StepResults({ location, people, vibe = [], onReset }) {
             Start over
           </button>
         </div>
+
+        <FilterSummaryCard
+          location={location}
+          people={people}
+          vibe={vibe}
+          cuisine={cuisine}
+        />
 
         {/* AI summary banner */}
         {aiData?.aiSummary && (

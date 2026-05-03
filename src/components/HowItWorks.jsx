@@ -3,27 +3,27 @@ import { steps } from '../data/mockData'
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-24 bg-white relative overflow-hidden">
+    <section id="how-it-works" className="bg-white relative overflow-hidden pt-20 pb-8 sm:pt-24 sm:pb-10">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-0 w-72 h-72 bg-brand-100/50 rounded-full blur-3xl -translate-y-1/2" />
         <div className="absolute top-1/2 right-0 w-72 h-72 bg-accent-100/30 rounded-full blur-3xl -translate-y-1/2" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-none px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 bg-brand-50 border border-brand-200 text-brand-700 text-sm font-semibold px-4 py-2 rounded-full">
-            ⚡ Ridiculously simple
-          </div>
+
           <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">
-            From chaos to{' '}
-            <span className="text-brand-500">consensus</span>
+            4 steps take you from
             <br />
-            in four steps.
+            
+            <span className="text-black-400">Chaos →</span>{' '}
+
+            <span className="text-green-500"> 
+              
+              Consensus</span>
+ 
           </h2>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            No spreadsheets. No voting. No arguments. Just tell the AI what everyone needs.
-          </p>
         </div>
 
         {/* Steps */}
@@ -61,12 +61,12 @@ export default function HowItWorks() {
         </div>
 
         {/* Bottom callout */}
-        <div className="mt-16 bg-gradient-to-r from-brand-50 to-amber-50 rounded-3xl border border-brand-100 p-8 text-center">
+        <div className="mt-16 mb-3 bg-gradient-to-r from-brand-50 to-amber-50 rounded-3xl border border-brand-100 px-8 pt-8 pb-9 text-center sm:mb-4">
           <p className="text-2xl font-black text-gray-900 mb-2">
             Average decision time: <span className="text-brand-500">28 seconds.</span>
           </p>
           <p className="text-gray-500">
-            Down from the industry average of "we never actually decided and just got pizza again."
+            so everyone leaves happy (and full) :)
           </p>
         </div>
       </div>

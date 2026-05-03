@@ -1,33 +1,19 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Problem from './components/Problem'
-import HowItWorks from './components/HowItWorks'
-import Features from './components/Features'
-import WhyDifferent from './components/WhyDifferent'
-import Testimonials from './components/Testimonials'
-import CTA from './components/CTA'
-import Footer from './components/Footer'
+import ScrollToHash from './components/ScrollToHash'
+import HomePage from './pages/HomePage'
+import HowItWorksPage from './pages/HowItWorksPage'
 
 export default function App() {
   return (
-    <div>
-      {/* Fixed navbar — 64px tall */}
+    <div className="min-w-0 w-full">
+      <ScrollToHash />
       <Navbar />
-
-      {/* The app — exactly one viewport height, sits right below navbar */}
-      <Hero />
-
-      {/* Marketing / landing content scrolls below */}
-      <main>
-        <Problem />
-        <HowItWorks />
-        <Features />
-        <WhyDifferent />
-        <Testimonials />
-        <CTA />
-      </main>
-      <Footer />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
+      </Routes>
     </div>
   )
 }

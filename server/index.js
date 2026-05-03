@@ -17,7 +17,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const YELP_KEY = process.env.YELP_API_KEY;
 
 // ─── Yelp: search restaurants near a location ─────────────────────────────────
-async function fetchYelpRestaurants(location, vibe = []) {
+async function fetchYelpRestaurants(location, vibe = [], cuisine = []) {
   if (!YELP_KEY) throw new Error("YELP_API_KEY not set in .env");
 
   // Map vibe tags to Yelp categories
@@ -32,12 +32,41 @@ async function fetchYelpRestaurants(location, vibe = []) {
     "drive-thru": "hotdogs,burgers",
   };
 
-  const categories = vibe.length
-    ? [
-        ...new Set(
-          vibe.flatMap((v) => (vibeToCategory[v] || "restaurants").split(",")),
-        ),
-      ].join(",")
+  /** Step-2 cuisine ids → Yelp `categories` aliases */
+  const cuisineToYelpAlias = {
+    mexican: "mexican",
+    italian: "italian",
+    japanese: "japanese",
+    chinese: "chinese",
+    thai: "thai",
+    indian: "indpak",
+    korean: "korean",
+    vietnamese: "vietnamese",
+    french: "french",
+    mediterranean: "mediterranean",
+    greek: "greek",
+    american: "newamerican,tradamerican",
+    seafood: "seafood",
+    bbq: "bbq",
+    pizza: "pizza",
+    middle_eastern: "mideastern,persian",
+    caribbean: "caribbean",
+    latin: "latin",
+    breakfast_brunch: "breakfast_brunch",
+    no_preference: "",
+  };
+
+  const fromVibe = vibe.flatMap((v) =>
+    (vibeToCategory[v] || "restaurants").split(","),
+  );
+  const fromCuisine = (cuisine || [])
+    .filter((c) => c && c !== "no_preference")
+    .flatMap((c) => String(cuisineToYelpAlias[c] || c).split(","));
+  const merged = [...fromVibe, ...fromCuisine]
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const categories = merged.length
+    ? [...new Set(merged)].join(",")
     : "restaurants";
 
   const params = new URLSearchParams({
@@ -122,7 +151,7 @@ function getCuisineEmoji(aliases = [], name = "") {
 }
 
 // ─── AI: rank + generate per-person recommendations ───────────────────────────
-async function aiRankAndRecommend(restaurants, people, vibe, location) {
+async function aiRankAndRecommend(restaurants, people, vibe, location, cuisine = []) {
   const groupSummary = people
     .map((p, i) => {
       const name = p.name?.trim() || `Person ${i + 1}`;
@@ -152,6 +181,7 @@ async function aiRankAndRecommend(restaurants, people, vibe, location) {
 
 LOCATION: ${location}
 VIBE PREFERENCES: ${vibe.join(", ") || "none specified"}
+CUISINE PREFERENCES: ${cuisine.filter((c) => c && c !== "no_preference").join(", ") || "any"}
 
 GROUP (${people.length} ${people.length === 1 ? "person" : "people"}):
 ${groupSummary}
@@ -310,7 +340,7 @@ function inferVibeTags(cuisineAliases) {
   return [...vibes];
 }
 
-function localScoreRestaurant(restaurant, people, vibe) {
+function localScoreRestaurant(restaurant, people, vibe, cuisine = []) {
   const aliases = restaurant.cuisine
     .toLowerCase()
     .split(" · ")
@@ -337,7 +367,10 @@ function localScoreRestaurant(restaurant, people, vibe) {
   let passesBudget = true;
   for (const person of people) {
     if (!person.budget) continue;
-    const budgetNum = parseInt(person.budget.replace("$", "").replace("+", ""));
+    const budgetNum = parseInt(
+      person.budget.replace(/\$/g, "").replace(/\+/g, ""),
+      10,
+    );
     // Rough price-per-item estimate from Yelp price level
     const avgPrice = restaurant.priceNum * 8; // $=8, $$=16, $$$=24, $$$$=32
     if (avgPrice > budgetNum * 1.5) passesBudget = false;
@@ -368,7 +401,8 @@ function localScoreRestaurant(restaurant, people, vibe) {
     // Budget (20%)
     if (person.budget) {
       const budgetNum = parseInt(
-        person.budget.replace("$", "").replace("+", ""),
+        person.budget.replace(/\$/g, "").replace(/\+/g, ""),
+        10,
       );
       const avgPrice = restaurant.priceNum * 8;
       totalBudgetScore +=
@@ -389,11 +423,27 @@ function localScoreRestaurant(restaurant, people, vibe) {
   const vibeMatches = vibe.filter((v) => vibeTags.includes(v)).length;
   const vibeComp = vibe.length ? (vibeMatches / vibe.length) * 100 * 0.15 : 15;
 
+  const cuisineIds = (cuisine || []).filter((c) => c && c !== "no_preference");
+  let cuisineBonus = 0;
+  if (cuisineIds.length) {
+    const normalized = aliases.join(" ").toLowerCase().replace(/\s+/g, "");
+    const hits = cuisineIds.filter((id) =>
+      normalized.includes(String(id).replace(/_/g, "").toLowerCase()),
+    ).length;
+    cuisineBonus = (hits / cuisineIds.length) * 8;
+  }
+
   // Rating bonus (tiebreaker)
   const ratingBonus = (restaurant.rating / 5) * 5;
 
   const score = Math.round(
-    dietComp + flavorComp + budgetComp + vibeComp + ratingBonus + hardPenalty,
+    dietComp +
+      flavorComp +
+      budgetComp +
+      vibeComp +
+      ratingBonus +
+      cuisineBonus +
+      hardPenalty,
   );
 
   return {
@@ -413,7 +463,7 @@ function localScoreRestaurant(restaurant, people, vibe) {
 // ─── /api/rank ────────────────────────────────────────────────────────────────
 app.post("/api/rank", async (req, res) => {
   try {
-    const { people = [], vibe = [], location = "" } = req.body;
+    const { people = [], vibe = [], cuisine = [], location = "" } = req.body;
 
     if (!people.length) {
       return res.status(400).json({ error: "No people provided" });
@@ -423,7 +473,7 @@ app.post("/api/rank", async (req, res) => {
     }
 
     // 1. Fetch real restaurants from Yelp
-    const restaurants = await fetchYelpRestaurants(location, vibe);
+    const restaurants = await fetchYelpRestaurants(location, vibe, cuisine);
 
     if (!restaurants.length) {
       return res
@@ -443,6 +493,7 @@ app.post("/api/rank", async (req, res) => {
         people,
         vibe,
         location,
+        cuisine,
       );
 
       ranked = (aiResult.rankedIds || [])
@@ -471,7 +522,7 @@ app.post("/api/rank", async (req, res) => {
       ranked = restaurants
         .map((r) => ({
           ...r,
-          ...localScoreRestaurant(r, people, vibe),
+          ...localScoreRestaurant(r, people, vibe, cuisine),
         }))
         .sort((a, b) => b.score - a.score);
     }

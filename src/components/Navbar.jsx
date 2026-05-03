@@ -1,4 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import { Link, NavLink } from 'react-router-dom'
+
+const navClass = ({ isActive }) =>
+  `text-base font-medium transition-colors ${
+    isActive ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'
+  }`
+
+const navClassMobile = ({ isActive }) =>
+  `block text-base font-medium py-1 transition-colors ${
+    isActive ? 'text-brand-600' : 'text-gray-700 hover:text-brand-500'
+  }`
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -10,12 +21,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const links = [
-    { label: 'How It Works', href: '#how-it-works' },
-    { label: 'Features', href: '#features' },
-    { label: 'Why Different', href: '#why-different' },
-  ]
-
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-300 ${
@@ -24,42 +29,34 @@ export default function Navbar() {
           : 'bg-white border-b border-gray-100'
       }`}
     >
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-        <div className="flex items-center justify-between h-full">
-          {/* Logo */}
-          <a href="#app" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:scale-105 transition-transform">
+      <div className="mx-auto flex h-full w-full min-w-0 items-center justify-between px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white text-base font-bold shadow-md group-hover:scale-105 transition-transform">
               🍽
             </div>
-            <span className="font-bold text-gray-900 text-lg tracking-tight">
+            <span className="font-bold text-gray-900 text-xl tracking-tight">
               Plate<span className="text-brand-500">Share</span>
             </span>
-          </a>
+          </Link>
 
-          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8">
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
-              >
-                {l.label}
-              </a>
-            ))}
+            <NavLink to="/" end className={navClass}>
+              Home
+            </NavLink>
+            <NavLink to="/how-it-works" className={navClass}>
+              How It Works
+            </NavLink>
           </div>
 
-          {/* CTA */}
           <div className="hidden md:flex items-center">
-            <a
-              href="#app"
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
+            <Link
+              to={{ pathname: '/', search: '?step=location', hash: 'app' }}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-base font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
             >
               Start Here →
-            </a>
+            </Link>
           </div>
 
-          {/* Mobile hamburger */}
           <button
             className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -75,31 +72,29 @@ export default function Navbar() {
               </svg>
             )}
           </button>
-        </div>
       </div>
 
-      {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-lg">
-          <div className="px-4 py-4 space-y-3">
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={() => setMenuOpen(false)}
-                className="block text-sm font-medium text-gray-700 hover:text-brand-500 py-1 transition-colors"
-              >
-                {l.label}
-              </a>
-            ))}
+        <div className="md:hidden w-full border-t border-gray-100 bg-white shadow-lg">
+          <div className="space-y-3 px-4 py-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
+            <NavLink to="/" end onClick={() => setMenuOpen(false)} className={navClassMobile}>
+              Home
+            </NavLink>
+            <NavLink
+              to="/how-it-works"
+              onClick={() => setMenuOpen(false)}
+              className={navClassMobile}
+            >
+              How It Works
+            </NavLink>
             <div className="pt-3 border-t border-gray-100">
-              <a
-                href="#app"
+              <Link
+                to={{ pathname: '/', search: '?step=location', hash: 'app' }}
                 onClick={() => setMenuOpen(false)}
-                className="block w-full text-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold"
+                className="block w-full text-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white text-base font-semibold"
               >
                 Start Here →
-              </a>
+              </Link>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 /**
  * Rank restaurants using the AI + Yelp backend.
  *
- * @param {{ people: object[], vibe: string[], location: string }} params
+ * @param {{ people: object[], vibe: string[], cuisine?: string[], location: string }} params
  * @returns {Promise<{
  *   ranked: object[],
  *   aiSummary: string|null,
@@ -12,12 +12,12 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
  *   error: string|null
  * }>}
  */
-export async function rankRestaurants({ people, vibe, location }) {
+export async function rankRestaurants({ people, vibe, cuisine = [], location }) {
   try {
     const res = await fetch(`${API_URL}/api/rank`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ people, vibe, location }),
+      body: JSON.stringify({ people, vibe, cuisine, location }),
       signal: AbortSignal.timeout(60_000), // 60s — Yelp + AI can take a moment
     });
 

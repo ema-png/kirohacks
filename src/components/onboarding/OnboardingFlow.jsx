@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import StartScreen from "./StartScreen";
 import StepLocation from "./StepLocation";
 import StepVibe from "./StepVibe";
@@ -27,12 +28,12 @@ function ProgressBar({ step }) {
   const activeIndex = steps.findIndex((s) => s.id === displayStep);
 
   return (
-    <div className="flex items-center gap-2 px-6 py-3 border-b border-gray-100 shrink-0 bg-white">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b border-gray-100 bg-white px-4 py-3.5 sm:gap-3 sm:px-6 lg:px-10 xl:px-14 2xl:px-20 shrink-0">
       {steps.map((s, i) => (
         <React.Fragment key={s.id}>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <div
-              className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 sm:h-9 sm:w-9 sm:text-base ${
                 i < activeIndex
                   ? "bg-green-500 text-white"
                   : i === activeIndex
@@ -43,7 +44,7 @@ function ProgressBar({ step }) {
               {i < activeIndex ? "✓" : i + 1}
             </div>
             <span
-              className={`text-xs font-semibold hidden sm:inline transition-colors ${
+              className={`text-sm font-semibold transition-colors sm:text-base ${
                 i === activeIndex
                   ? "text-gray-900"
                   : i < activeIndex
@@ -56,7 +57,7 @@ function ProgressBar({ step }) {
           </div>
           {i < steps.length - 1 && (
             <div
-              className={`flex-1 h-0.5 rounded-full transition-all duration-500 ${i < activeIndex ? "bg-green-400" : "bg-gray-100"}`}
+              className={`min-w-[0.75rem] flex-1 basis-4 rounded-full transition-all duration-500 h-1 sm:min-w-4 sm:basis-8 ${i < activeIndex ? "bg-green-400" : "bg-gray-100"}`}
             />
           )}
         </React.Fragment>
@@ -66,24 +67,43 @@ function ProgressBar({ step }) {
 }
 
 export default function OnboardingFlow() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [step, setStep] = useState(STEPS.START);
   const [location, setLocation] = useState("");
   const [coords, setCoords] = useState(null); // { lat, lon }
   const [vibe, setVibe] = useState([]);
-  const [occasion, setOccasion] = useState("");
+  const [cuisine, setCuisine] = useState([]);
   const [people, setPeople] = useState([
     newPerson(1, "Person 1"),
     newPerson(2, "Person 2"),
   ]);
+
+  /** Navbar "Start Here" uses `?step=location` to open step 1 (location) directly. */
+  useEffect(() => {
+    if (searchParams.get("step") !== "location") return;
+    setStep(STEPS.LOCATION);
+    setLocation("");
+    setCoords(null);
+    setVibe([]);
+    setCuisine([]);
+    setPeople([newPerson(1, "Person 1"), newPerson(2, "Person 2")]);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("step");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [searchParams, setSearchParams]);
 
   const handleReset = () => {
     setStep(STEPS.START);
     setLocation("");
     setCoords(null);
     setVibe([]);
-    setOccasion("");
+    setCuisine([]);
     setPeople([newPerson(1, "Person 1"), newPerson(2, "Person 2")]);
-    setAnimDone(false);
   };
 
   const showProgress = step !== STEPS.START;
@@ -129,9 +149,9 @@ export default function OnboardingFlow() {
         {step === STEPS.VIBE && (
           <StepVibe
             vibe={vibe}
-            occasion={occasion}
+            cuisine={cuisine}
             onVibeChange={setVibe}
-            onOccasionChange={setOccasion}
+            onCuisineChange={setCuisine}
             onNext={() => setStep(STEPS.PEOPLE)}
             onBack={() => setStep(STEPS.LOCATION)}
           />
@@ -149,7 +169,7 @@ export default function OnboardingFlow() {
             onDone={() => setStep(STEPS.RESULTS)}
             people={people}
             vibe={vibe}
-            occasion={occasion}
+            cuisine={cuisine}
             location={location}
           />
         )}
@@ -158,6 +178,7 @@ export default function OnboardingFlow() {
             location={location}
             people={people}
             vibe={vibe}
+            cuisine={cuisine}
             onReset={handleReset}
           />
         )}
