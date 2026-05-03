@@ -72,8 +72,7 @@ export default function OnboardingFlow() {
   const [vibe, setVibe] = useState([]);
   const [occasion, setOccasion] = useState("");
   const [people, setPeople] = useState([
-    newPerson(1, "Person 1"),
-    newPerson(2, "Person 2"),
+    newPerson(1, ""),
   ]);
 
   const handleReset = () => {
@@ -82,7 +81,7 @@ export default function OnboardingFlow() {
     setCoords(null);
     setVibe([]);
     setOccasion("");
-    setPeople([newPerson(1, "Person 1"), newPerson(2, "Person 2")]);
+    setPeople([newPerson(1, "")]);
     setAnimDone(false);
   };
 
