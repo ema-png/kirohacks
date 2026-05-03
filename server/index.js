@@ -41,7 +41,7 @@ async function fetchYelpRestaurants(location, vibe = []) {
   const params = new URLSearchParams({
     location,
     categories,
-    limit: "8",
+    limit: "20",
     sort_by: "best_match",
     open_now: "true",
   });
@@ -96,7 +96,8 @@ function getCuisineEmoji(aliases = [], name = "") {
 
 // ─── AI ranking ───────────────────────────────────────────────────────────────
 async function aiRankAndRecommend(restaurants, people, vibe, location) {
-  const candidates = restaurants.slice(0, 8);
+  // Send all 20 to AI so it can pick the best 8 that satisfy the group
+  const candidates = restaurants.slice(0, 20);
 
   const groupSummary = people
     .map((p, i) => {
@@ -126,10 +127,13 @@ ${groupSummary}
 RESTAURANTS (use the number in brackets as the id):
 ${restaurantList}
 
-Rank these for the group. Hard-filter any that fail a person's dietary need (Vegan, Vegetarian, Halal, Nut-Free, Gluten-Free) or budget to the bottom.
+Rank these for the group and return the best 8 results.
+
+HARD RULE: If any person has a dietary restriction (Vegan, Vegetarian, Halal, Nut-Free, Gluten-Free), the restaurant MUST be able to accommodate it — meaning they must have menu options that satisfy it. Skip any restaurant that cannot accommodate even one person's hard dietary need and replace it with one that can.
+
 A person with no preferences is automatically satisfied by any restaurant.
 
-Respond with ONLY valid JSON:
+Return exactly 8 rankedIds. Respond with ONLY valid JSON:
 {
   "rankedIds": [0, 1, 2, ...],
   "scores": { "0": 0-100 },
@@ -339,6 +343,7 @@ app.post("/api/rank", async (req, res) => {
         .map((id) => {
           const r = restaurants.find((x) => x.id === id);
           if (!r) return null;
+          const aliases = r.cuisine.toLowerCase().split(" · ").map((s) => s.trim());
           return {
             ...r,
             score: aiResult.scores?.[id] ?? 0,
@@ -347,9 +352,13 @@ app.post("/api/rank", async (req, res) => {
             satisfiedCount: aiResult.satisfiedCounts?.[id] ?? people.length,
             totalPeople: people.length,
             reasoning: aiResult.reasoning?.[id] ?? null,
+            dietSupport: inferDietSupport(aliases),
+            tags: inferFlavorTags(aliases),
           };
         })
-        .filter(Boolean);
+        .filter(Boolean)
+        // Remove restaurants that fail hard dietary needs or satisfy nobody
+        .filter((r) => r.passesHardDiet && r.satisfiedCount > 0);
       console.log(`AI ranked ${ranked.length} restaurants`);
 
       aiSummary = aiResult.aiSummary ?? null;

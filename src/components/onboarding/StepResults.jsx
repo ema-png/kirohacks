@@ -150,15 +150,18 @@ function RestaurantCard({ restaurant, people, rank, isSelected, onSelect }) {
         </div>
 
         <div className="flex flex-wrap gap-1.5 mt-3">
-          {(restaurant.tags || []).map((t) => (
-            <span key={t} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{t}</span>
+          {/* Diet tags: every diet need the group selected — restaurant already confirmed to support them */}
+          {[...new Set(people.flatMap((p) => p.diet || []))].map((d) => (
+            <span key={d} className="text-xs px-3 py-1.5 rounded-full border font-medium bg-green-100 text-green-700 border-green-200">
+              ✓ {d}
+            </span>
           ))}
-          {(restaurant.dietSupport || [])
-            .filter((d) => people.some((p) => p.diet?.includes(d)))
-            .slice(0, 3)
-            .map((d) => (
-              <span key={d} className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">✓ {d}</span>
-            ))}
+          {/* Flavor tags: everything the group selected */}
+          {[...new Set(people.flatMap((p) => p.flavors || []))].map((t) => (
+            <span key={t} className="text-xs px-3 py-1.5 rounded-full border font-medium bg-orange-100 text-orange-700 border-orange-200">
+              {t}
+            </span>
+          ))}
         </div>
 
         <div className="flex items-center gap-2 mt-3">
