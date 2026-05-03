@@ -14,7 +14,7 @@ export default function Hero() {
       <div className="absolute bottom-0 -right-32 w-96 h-96 bg-accent-200/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Onboarding flow fills the full viewport height */}
-      <div className="relative h-full max-w-5xl mx-auto">
+      <div className="relative mx-auto h-full w-full max-w-none px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
         <OnboardingFlow />
       </div>
     </section>

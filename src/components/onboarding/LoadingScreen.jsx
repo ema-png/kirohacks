@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { VIBE_OPTIONS, OCCASION_OPTIONS } from './StepVibe'
+import { VIBE_OPTIONS, CUISINE_OPTIONS } from './StepVibe'
 import { PERSON_COLORS, AVATARS } from './StepPeople'
 
 const LOADING_STEPS = [
@@ -8,25 +8,31 @@ const LOADING_STEPS = [
   { icon: '🥗', text: 'Checking dietary restrictions…' },
   { icon: '💰', text: 'Balancing budgets…' },
   { icon: '🌶️', text: 'Matching flavor profiles…' },
-  { icon: '🤖', text: 'AI mediating preferences…' },
   { icon: '✅', text: 'Ranking results for your group…' },
 ]
 
 // Build a natural-language summary of the group's preferences
-function buildSummary(people, vibe, occasion, location) {
+function budgetSortKey(b) {
+  return parseInt(String(b).replace(/\$/g, '').replace(/\+/g, ''), 10) || 0
+}
+
+function buildSummary(people, vibe, cuisine, location) {
   const vibeLabels = vibe.map(id => VIBE_OPTIONS.find(v => v.id === id)?.label).filter(Boolean)
-  const occasionLabel = OCCASION_OPTIONS.find(o => o.id === occasion)?.label
+  const cuisineLabels = cuisine
+    .filter((id) => id !== 'no_preference')
+    .map((id) => CUISINE_OPTIONS.find((c) => c.id === id)?.label)
+    .filter(Boolean)
 
   const allDiets = [...new Set(people.flatMap(p => [...p.diet, ...(p.otherDiet ? [p.otherDiet] : [])]))]
   const allFlavors = [...new Set(people.flatMap(p => [...p.flavors, ...(p.otherFlavors ? [p.otherFlavors] : [])]))]
   const allAvoid = [...new Set(people.flatMap(p => [...p.avoid, ...(p.otherAvoid ? [p.otherAvoid] : [])]))]
   const budgets = people.map(p => p.budget).filter(Boolean)
-  const lowestBudget = budgets.sort((a, b) => parseInt(a) - parseInt(b))[0]
+  const lowestBudget = budgets.sort((a, b) => budgetSortKey(a) - budgetSortKey(b))[0]
 
   const parts = []
 
   if (vibeLabels.length) parts.push(`${vibeLabels.join(' or ')} dining`)
-  if (occasionLabel) parts.push(`for ${occasionLabel.toLowerCase()}`)
+  if (cuisineLabels.length) parts.push(`${cuisineLabels.join(', ')} food`)
   parts.push(`near ${location || 'your area'}`)
   parts.push(`for ${people.length} ${people.length === 1 ? 'person' : 'people'}`)
   if (allDiets.length) parts.push(`with ${allDiets.slice(0, 3).join(', ')} needs`)
@@ -37,9 +43,9 @@ function buildSummary(people, vibe, occasion, location) {
   return parts.join(' · ')
 }
 
-export default function LoadingScreen({ onDone, people, vibe, occasion, location }) {
+export default function LoadingScreen({ onDone, people, vibe, cuisine = [], location }) {
   const [step, setStep] = useState(0)
-  const summary = buildSummary(people, vibe, occasion, location)
+  const summary = buildSummary(people, vibe, cuisine, location)
 
   useEffect(() => {
     if (step < LOADING_STEPS.length - 1) {
@@ -52,7 +58,7 @@ export default function LoadingScreen({ onDone, people, vibe, occasion, location
   }, [step, onDone])
 
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-6 px-6 max-w-md mx-auto w-full">
+    <div className="mx-auto flex h-full w-full max-w-3xl flex-col items-center justify-center gap-6 px-4 sm:px-6">
       {/* Animated icon */}
       <div className="relative shrink-0">
         <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-4xl shadow-2xl shadow-brand-500/30 animate-pulse-slow">

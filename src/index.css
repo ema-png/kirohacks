@@ -9,8 +9,12 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-white text-gray-900 antialiased;
+    @apply min-w-0 w-full bg-white text-gray-900 antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  #root {
+    @apply min-w-0 w-full;
   }
 }
 

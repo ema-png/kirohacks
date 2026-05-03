@@ -76,7 +76,7 @@ export default function StepLocation({ value, onChange, onNext }) {
   }
 
   return (
-    <div className="flex flex-col h-full px-6 py-8 max-w-lg mx-auto w-full gap-6 justify-center">
+    <div className="mx-auto flex h-full w-full max-w-3xl flex-col justify-center gap-6 px-4 py-8 sm:px-6">
       {/* Header */}
       <div className="space-y-2">
         <p className="text-xs font-bold text-brand-500 uppercase tracking-widest">Step 1 of 4</p>
