@@ -9,7 +9,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: resolve(__dirname, ".env") });
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://nobeef.vercel.app",
+    /\.vercel\.app$/,
+  ],
+}));
 app.use(express.json());
 
 let _openai = null;
